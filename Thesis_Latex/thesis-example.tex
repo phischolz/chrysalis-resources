@@ -25,7 +25,7 @@
 % Information and Commands for Reuse
 % **************************************************
 \newcommand{\thesisTitle}{Seminar}
-\newcommand{\thesisName}{Vorname Nachname}
+\newcommand{\thesisName}{Philipp Scholz, Anatoly Obukhov}
 \newcommand{\thesisSubject}{Titel / Topic}
 \newcommand{\thesisDate}{August 26, 2015}
 \newcommand{\thesisVersion}{Draft / Final}
@@ -87,8 +87,6 @@
 % --------------------------
 % rename document parts
 % --------------------------
-%\renewcaptionname{ngerman}{\figurename}{Abb.}
-%\renewcaptionname{ngerman}{\tablename}{Tab.}
 \renewcaptionname{english}{\figurename}{Fig.}
 \renewcaptionname{english}{\tablename}{Tab.}
 
@@ -117,11 +115,18 @@
 \setcounter{page}{1}			% set page counter
 \pagestyle{maincontentstyle} 	% fancy header and footer
 
-\input{content/chapter-introduction} % INCLUDE: introduction
-\input{content/chapter-related-work} % INCLUDE: related work
-\input{content/chapter-system}	% INCLUDE: system
-\input{content/chapter-concepts} % INCLUDE: concepts
-\input{content/chapter-conclusion} % INCLUDE: conclusion
+\input{content/chapter-introduction} 
+\input{content/chapter-general-architecture}
+ 
+\input{content/chapter-improvements}
+\input{content/subchapter-improvements-restructure}
+\input{content/subchapter-improvements-persistence}
+\input{content/subchapter-improvements-hyperledger}
+\input{content/subchapter-improvements-ethereum-overhaul}
+	
+\input{content/chapter-open-issues} 
+\input{content/chapter-resources} 
+\input{content/chapter-conclusion} 
 \cleardoublepage
 
 % --------------------------

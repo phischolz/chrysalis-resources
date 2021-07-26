@@ -1,0 +1,16 @@
+
+- introduction (what's chrysalis and why)
+
+- general architecture
+
+- improvements
+-- project restructure
+-- persistence layer
+-- hyperledger
+-- eth restructure
+
+- final structure ("summary")
+- caterpillar
+
+- open issues & proposals
+- useful links/info

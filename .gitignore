@@ -3,6 +3,8 @@
 *.out.ps
 *.run.xml
 *.log
+*.log.xml
+*.run
 *.synctex.gz
 *.toc
 *.dvi

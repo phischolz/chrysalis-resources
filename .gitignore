@@ -1,3 +1,6 @@
+#################
+# TEX WORKFILES #
+#################
 *.lot
 *.out
 *.out.ps
@@ -11,3 +14,8 @@
 *.lof
 *.aux
 *chrysalis-report-blx.bib
+
+##########
+# OUTPUT #
+##########
+*.pdf

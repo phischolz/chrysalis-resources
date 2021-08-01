@@ -1,0 +1,25 @@
+function completing(uint taskId) public returns (bool success){
+        require(!processState.tasks[taskId].completed, "DO NOT REPEAT TASKS!!!");
+        TaskEntities.Task memory thetask = processState.tasks[taskId];
+        uint endBoss;
+        (success, endBoss) = TaskLibrary.completeTask(thetask, processState);
+        
+        if(thetask.decision.exists) {
+            processState.enabled[endBoss] = success;
+
+            //LOCKING
+            for (uint i = 0; i < thetask.competitors.length; i++) {
+                processState.tasks[(thetask.competitors[i])].completed = success;
+            }       
+
+        }
+        processState.tasks[taskId].completed = success;
+        emit TaskCompleted(success);
+        
+        if (success) {
+            debugStringeventLog.push(thetask.activity);
+            theRealEventLog.push(taskId);
+        }
+        
+        return success;
+    }

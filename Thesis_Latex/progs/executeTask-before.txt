@@ -1,0 +1,38 @@
+function completing(uint taskId) public returns (bool success){
+
+        require(!tasks[taskId].completed, "DO NOT REPEAT TASKS!!!");
+
+    uint endBoss = 0;
+    Task memory thetask = tasks[taskId];
+    // ORGANISATIONAL PERSPECTIVE
+        
+        address resource = tasks[taskId].taskresource;
+        require(resource == address(0) || resource == msg.sender, tasks[taskId].activity);
+
+    // INFORMATIONAL PERSPECTIVE
+        
+        // evaluate Decision
+
+        if(tasks[taskId].decision.exists) {
+            endBoss = tasks[taskId].decision.endBoss;
+            bool result = evaluateDecision(tasks[taskId].decision);
+            require(result, 'Process Variable is not correct.');
+        }
+        
+    // CONTROL-FLOW PERSPECTIVE
+    
+        uint[] memory requiredTasksIds = tasks[taskId].requirements;
+        if (requiredTasksIds.length == 0) {
+
+            success = true;
+        }
+        else {
+
+            GatewayType gateway = tasks[taskId].preceedingMergingGateway;
+            
+            if (gateway == GatewayType.NONE) {
+                if (isTaskCompletedById(requiredTasksIds[0]) == true) {
+                    success = true;
+                }
+            }
+            

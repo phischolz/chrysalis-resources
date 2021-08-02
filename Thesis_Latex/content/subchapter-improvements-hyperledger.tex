@@ -31,7 +31,7 @@ As depicted in figure \ref{fig:impr:hl:basics:abstraction} by an 'engine' compon
 The \emph{World State} Container is a synchronous representation of all data present in Hyperledger's underlying Blockchain, meaning that the data points present are always a representation their most recent update. Additionally, the World State is arranged like a dictionary, so that every structure inside is reachable by a key, defined by the user itself. This way, the programmer doesn't have to worry about physical addresses of the data. \newline
 In the \emph{Chaincode} containers one can find the Smart Contract objects one would also find in other Blockchain application. However, these contracts are not stateful and therefore do not contain any data besides the location of the World State, where the data may be contained. In comparison, an \emph{Ethereum}-based contract may have private data and would therefore be stateful. Additionally, Chaincodes are also invocable via name, specifically by a combination of the parent contract name and the function that is to be executed.
 
-\subsection{Required Components}
+\subsection{Component Overview}
 \label{sec:impr:hl:requirements}
 
 \begin{figure}[h]
@@ -42,22 +42,45 @@ In the \emph{Chaincode} containers one can find the Smart Contract objects one w
 	\label{fig:impr:hl:structure}
 \end{figure}
 
-TODO explain what new components will appear and how they weave into EY
+Three components will be needed to build a running Hyperledger-based application for the Chrysalis project. \newline
+First of all, a Hyperledger Network must be established in the first place, so all necessary structures can be deployed there. Secondly, being the most complex component of the three, the Chaincode must be defined along with the data structures it uses. This module may be written and deployed in generic JavaScript thanks to Hyperledger's flexibility regarding the deployed language (e.g., this module could also be written in \emph{Go}). As per Hyperledger's requirements, the module must be contained in a separate package that can locally install dependencies and can be packed into a compressed file. Once this package is deployed, an API is needed in \emph{Enzian-Yellow} to access the Network and use the deployed components. This step is fairly straightforward, since Hyperledger Fabric provides this API and the structure of the \emph{HyperledgerEnzianYellow} can mostly be mirrored from that of \emph{EthereumEnzianYellow}.
 
 \subsection{Test-Network}
 \label{sec:impr:hl:network}
 
-TODO as in pres
+To keep development effort low, the Hyperledger Network where the contracts and data may be deployed was not built from scratch, but instead the "test-network" from Hyperledger's \emph{fabric-samples} repository was used. This network came with the features stated below.
+
+\textbf{Network Deployment:} Instead of having to configure every network node, having to start it manually and registering it to the network, the test-network spares the developer from this work by making a running network with isolated components available as a composition of \emph{Docker}-Images. Additionally, with the help of pre-written scripts, the user may easily instantiate said composition.
+
+\textbf{Reset functionality:} With a pre-written script, the developer may also simply wipe the entire network and bring it down. This makes development especially easy, since no trace (potentially even illegal states) of previous work will be left on the Blockchain.
+
+\emph{Multi-Organization Scenario:} If instantiated with the right parameters, the network would come up with two organizations created, both containing one network peer each and reporting to a certificate authority. This configuration is useful, since the developer can make sure their application would run in a realistic scenario where their application and contracts must be validated by all network-registered organizations. The test-network also offers a lot of helpful scripts to make interactions with it a bit less cumbersome, e.g., so that Chaincodes may be deployed with less steps.
 
 \subsection{Representation of Processes}
 \label{sec:impr:hl:datastructure}
 
-TODO as in pres
+TODO first model the objects in the world state and how to read/save them
+
+\begin{figure}[h]
+	\centering
+	\captionsetup{justification=centering,margin=2cm}
+	\includegraphics[width=0.8\textwidth]{gfx/hl-data}
+	\caption{Data Structure deployed on the World State (State) as well as the objects that actively read and write on it (StateList)}
+	\label{fig:impr:hl:data}
+\end{figure}
+
+TODO then implement Process representations on that
 
 \subsection{Process Deployment and Execution}
 \label{sec:impr:hl:chaincode}
 
-TODO as in pres
+\begin{figure}[h]
+	\centering
+	\captionsetup{justification=centering,margin=2cm}
+	\includegraphics[width=\textwidth]{gfx/hl-contract}
+	\caption{Structure of a Chaincode (Contract) together with it's gateway object that points to the World State (Context)}
+	\label{fig:impr:hl:contract}
+\end{figure}
 
 \subsection{Integration into Chrysalis}
 \label{sec:impr:hl:integration}

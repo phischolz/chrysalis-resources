@@ -21,13 +21,13 @@ From the user's point of view, three interactions with the system are generally 
 \end{figure}
 
 \textbf{Configuration} \\[0.2em]
-TODO config
+Before BPM actions are possible, some parameters must be set. On one hand, the endpoint URL of the local Blockchain application (the Blockchain \emph{node}) must be declared. Additionally, the authentication of the user in front of the node is needed, usually a private key or cryptographic token of the likes. In the case of the original \emph{Chrysalis} application, the browser plugin \emph{Metamask} could also be used to provide these credentials, with the app automatically detecting the plugin and using it's connections.
 
 \textbf{Process Deployment} \\[0.2em]
-TODO deployment
+For instantiating a process, first and foremost the user needs to provide the underlying process model. This is done by handing over a file written in BPMN format (the XML extension) containing the model. Additionally, the user selects where to deploy said process - usually the previously configured private network - and, in the original application, via which interface the Blockchain application shall be contacted. Then, the user simply hits the 'Deploy' button and the application handles the rest, parsing and deploying the provided model to the provided target, returning and saving the address where the process instance is situated on the blockchain data structure.
 
 \textbf{Process Execution} \\[0.2em]
-TODO execution
+Given a deployed process's address, the user can then switch to the execution tab, where they may select the process and specify the task they wish to be executed. All other details of the execution are handled in the background. After every task execution and at the beginning, the user is also shown the current event log of the selected process instance, giving feedback towards the current process state. This is currently the only way of telling whether a process might be executable.
 
 \section{Components and their Interactions}
 \label{sec:init:components}
@@ -41,7 +41,7 @@ TODO execution
 	\label{fig:init:components:layers}
 \end{figure}
 
-The name-giving component, \emph{Chrysalis}, is a front-end application written in \emph{React} (for disambiguation, we will refer to the component as 'Chrysalis' and the entire system as 'project'). While it serves as a window for the user to interact with, it also handles the storage of any relevant data, like the addresses of deployed processes and authentication credentials of the user. \emph{Chrysalis}, like any React-app, deploys a packaged version of itself and it's dependencies into the user's browser, to be executed there. As for business process interactions, it instantiates an \emph{Enzian-Yellow} object with the fitting configuration and delegates all commands to it.
+The name-giving component, \emph{Chrysalis}, is a front-end application written in \emph{React} (for disambiguation, we will refer to the component as 'Chrysalis' and the entire system as 'project' or 'application'). While it serves as a window for the user to interact with, it also handles the storage of any relevant data, like the addresses of deployed processes and authentication credentials of the user. \emph{Chrysalis}, like any React-app, deploys a packaged version of itself and it's dependencies into the user's browser, to be executed there. As for business process interactions, it instantiates an \emph{Enzian-Yellow} object with the fitting configuration and delegates all commands to it.
 
 \emph{Enzian-Yellow}, being an installed dependency of \emph{Chrysalis}, does the abstraction work between BPM actions and Blockchain operations. When instantiated and configured, it will in turn instantiate and configure a Blockchain-API to connect to the corresponding network node. \emph{Enzian-Yellow} offers methods like creating and deploying processes and executing tasks, which are internally translated into the corresponding API invocations, and vice versa for the node's responses.
 
@@ -52,6 +52,10 @@ The \emph{Blockchain Network Node}, depicted in figure \ref{fig:init:components:
 \section{Modeling of Processes}
 \label{sec:init:model}
 
-TODO Introduce Smart Contracts and Data as primary Blockchain Components
-TODO explain how Processes are represented with those.
+To store and interact with data on the blockchain in a defined way, the Blockchains usually offer a specific gateway to guard the chain's state from abuse: \emph{Smart Contracts}. A Smart Contract is simply an executable program or routine written onto the Blockchain itself, so that every peer of the network may see it's definitions. This has multiple advantages in the \emph{Chrysalis} application's use case:
 
+\begin{itemize}
+    \item \emph{Transparent logic:} Since the process logic is defined in the smart contract, every peer has a transparent definition of how a process may be changed - in extension, we define that a process may never be changed outside contract definitions.
+    \item \emph{Security:} Since a contract is the only way to interact with the process, every peer may check on the validity of a proposed contract invocation. As peers have to agree on Blockchain interactions before they are written, the trust issue mentioned in TODO is solved.
+    \item \emph{Data handling:} The smart contract either internally memorizes the location of deployed process models ir translates external keys into their location. Either way, the contract abstracts memory addresses inside the Blockchain away for the user and the developer.
+\end{itemize}

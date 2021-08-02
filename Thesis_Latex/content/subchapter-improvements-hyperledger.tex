@@ -59,7 +59,11 @@ To keep development effort low, the Hyperledger Network where the contracts and 
 \subsection{Representation of Processes}
 \label{sec:impr:hl:datastructure}
 
-TODO first model the objects in the world state and how to read/save them
+It makes sense to split the data model deployed onto the ledger into two parts: The first defines how a JavaScript object may be represented inside the \emph{World State} as well as in memory and how these two versions are to be synchronized. The second part, building on those definitions, defines how a process as well as it's tasks shall be modeled as such objects, how they interact and how they may be operated upon. The resulting components are visible in figure \ref{fig:impr:hl:data} and described below.
+
+\textbf{Objects on the World State} \\[0.2em]
+As the World State acts like a dictionary, any data placed on it is modeled as an extension of the class \emph{State}. This State object defines its own key with which it is found on said dictionary-like structure, as well as a static method to serialize and deserialize it to/from a JSON representation, as it has to be stored in a more permanent form. \newline
+In addition to this data class, a 'manager' object is needed, in our case of the type \emph{StateList}, to store the location of the World State itself, to write or update deserialized State objects onto it, and to cast the 'rehydrated' objects back onto the correct class.
 
 \begin{figure}[h]
 	\centering
@@ -69,10 +73,20 @@ TODO first model the objects in the world state and how to read/save them
 	\label{fig:impr:hl:data}
 \end{figure}
 
-TODO then implement Process representations on that
+\textbf{Process Representation} \\[0.2em]
+With the definitions of \emph{State} and \emph{StateList} given, we can now implement the process structure as a simple extension of those, mostly not having to worry about the internals of the World State. 
+\begin{itemize}
+    \item \textbf{ProcessInstance}, being an extension of State, is the structure that binds an active process together: It stores the keys that point toward it's subordinated Tasks and Variables, and also contains the event log, which is an ordered list of task IDs, appearing in the order the tasks were executed (a newly created ProcessInstance would therefore contain an empty log). As the ProcessInstance is the 'root' object of the data structure, it's Key is simply defined as a positive integer.
+    \item \textbf{TaskInstance}, representing the Task State, contains - besides it's key and ID - all necessary data that makes up tasks in BPMN: A name, a list of competing tasks and completed task IDs required for execution, and so on. Additionally, to model BPM gateways it contains a \emph{precedingMergingGateway} attribute as well as a \emph{decision} structure, similar to (TODO: Christian's paper). The key is defined as follows: \emph{[key of parent process]:task:[task ID]}
+    \item \textbf{VariableInstance}, lastly, is a simple wrapper for a value of a given type, with a log of previous values as an addition. Currently, only variables of type integer and string are supported. The key is defined as follows: \emph{[key of parent process]:var:[variable ID]} - also showing why the middle section differentiating between tasks and variables is needed: Variable and task IDs may clash and must therefore be expanded by some prefix.
+\end{itemize}
+The \textbf{ProcessesNode} class, extending StateList, acts as a gateway to the previously defined objects, offering the usual \emph{get, set} and \emph{update} methods. Also, since it makes sense to immediately write every action on the data structure onto the World State after executing it to prevent bugs, ProcessesNode also offers many BPM-based functions like \emph{executeTask}, therefore encapsulating a lot of Process logic as well. Objects of this class are meant to make it possible to interact with the process model entirely without knowing the underlying model, only using provided keys. \newline
+How this ProcessesNode finds its way into a Chaincode, however, will be explained in the next chapter.
 
 \subsection{Process Deployment and Execution}
 \label{sec:impr:hl:chaincode}
+
+A Smart Contract (Chaincode) in Hyperledger Fabric, as well as the data structure, can be written in multiple supported programming languages, including JavaScript, which was used here. Implementing it is as simple as creating a class that extends the \emph{Contract} class from the Fabric API, as seen in figure \ref{fig:impr:hl:contract}.
 
 \begin{figure}[h]
 	\centering
@@ -82,12 +96,30 @@ TODO then implement Process representations on that
 	\label{fig:impr:hl:contract}
 \end{figure}
 
+\textbf{Contracts} \\[0.2em]
+Defining what would be an invocable contract from the outside is as simple as giving the extending \emph{Contract} class a method: Users will be able to invoke this function simply by its name coupled with the class's name, e.g., "ProcessesContract" and "createProcess", together with it's arguments. However, a few special rules apply here: Firstly, while parameters and return values can be generic JavaScript objects that do not have to be serialized, all non-primitive types must be transferred via \emph{Buffer} to account for the networking between the caller and the callee. Secondly, the contract methods will always be provided a \emph{Context} object (see next passage for details) as first positional argument. This context will be handed to the method by the Hyperledger API, not the caller, therefore only the second argument and all those after may be used for argument passing.
+
+TODO(screenshot of ctx object?)
+
+\textbf{Context} \\[0.2em]
+The Context, as described before, is another object provided by Hyperledger's API and handed to every smart contract during execution. Foremost, it contains the network-\emph{stub}, which is the gateway to the World State. We can now extend this Context into \emph{ProcessesContext}, that always contains a newly instantiated ProcessesNode object, therefore also giving access to all the data structures and logic as we defined them in section \ref{sec:impr:hl:datastructure}. During instantiating, the ProcessesNode is also handed a reference to the stub, so that it may have an access point to the World State. To make clear to Hyperledger's API that our Chaincode is supposed to use this version of Context, we override the Chaincode's method \emph{createContext} to return our version instead of the default one. 
+
+With these two components, it is now clear how a contract invocation results in manipulations or queries on the processes: When a method of ProcessesContract is invoked, it is handed the ProcessesContext and uses it to access ProcessesNode to then execute all process-related logic there. The whole interaction is currently purely based on passing and returning keys and primitive construction parameters, however it would also be possible for the caller to receive objects from the data structure as copies of their current state - still, it should generally be disallowed to write self-made objects to the network, as this might cause trust issues.
+
 \subsection{Integration into Chrysalis}
 \label{sec:impr:hl:integration}
 
-TODO explain API a bit, otherwise as in pres
+From the side of HyperledgerEnzianYellow, interaction is fairly simple. Due to the underlying interaction model in the Hyperledger network being similar to the model deployed to the \emph{Ethereum} network, the general structure of HyperledgerEnzianYellow is basically the same as that of EthereumEnzianYellow. \newline
+When HyperledgerEnzianYellow is instantiated, the HyperledgerAccessor is also constructed, building up a working connection to the Hyperledger network during construction (or throwing, if the connection fails). Currently, provided arguments aren't used, but instead read from a static definition, as an integration error (see section \ref{sec:issues:integration}) made using it properly impossible. \newline
+Once the connection is built, the accessor can then freely pull a Chaincode by simply specifying the correct name, being returned an interface object. This interface can then be used to invoke the contracts by name and handing over parameters, as if the method were local. Using the previously defined Chaincode, HyperledgerEnzianYellow can offer the same functionality for BPM as EthereumEnzianYellow with the same parameters, the only difference being that the process addresses are in fact structured keys instead of proper addresses.
 
 \subsection{Result}
 \label{sec:impr:hl:result}
 
-TODO mention issue
+All in all, the task of implementing a Hyperledger-based process execution engine as a prototype can be considered successful and fruitful. The Hyperledger Smart Contracts are able to mirror the Ethereum Contracts, can be deployed on a running system successfully and can be connected to - especially by HyperledgerEnzianYellow. From a BPM perspective, the Hyperledger application fulfills all required functions and even partly surpasses Ethereum in a few features:
+\begin{itemize}
+    \item \textbf{Execution Speed:} As Hyperledger doesn't rely on mining to sign and validate new additions to the Blockchain, the deployed contracts can be invoked with fairly low delay - about two seconds per invocation. A direct comparability with Ethereum is not given, though: A mining-based protocol can technically be sped up massively by adding more miners and reducing the hashing difficulty of the mining puzzles. Still, Hyperledger's test-network is rather feature-rich and probably contains a lot of overhead that might not be needed in our case, and might also be a lot quicker if optimized.
+    \item \textbf{Reliability:} Compared to a mining blocks, adding them after a consensus is not based on random numbers. Therefore, the time between a contract invocation and the completion of the underlying transaction is extremely constant. In Ethereum's case, we saw huge discrepancies between the times individual transmissions took.
+    \item \textbf{Readability:} As a small bonus, all addresses Hyperledger uses - even internally - are developer-defined and therefore have a human-readable structure, like those of the process data structure defined in section \ref{sec:impr:hl:datastructure}, and therefore make development and back end work a lot easier and more transparent even without usage of a persistence layer.
+    \item \textbf{Efficiency:} Without mining, we perceived a significant reduction in processing load on the Hyperledger application compared to the Ethereum one. For example, where the Hyperledger application occupied a few threads with barely any load on the processor, the Ethereum miner alone (before process Chrysalis even ran), needed to put multiple processor cores on full load only to facilitate a transaction delay low enough to comfortably work with. This issue might not arise on more powerful server architectures, though.
+\end{itemize}

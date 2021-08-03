@@ -3,22 +3,30 @@
 \chapter{Open Issues}
 \label{sec:issues}
 
-TODO this is far from done even if we succeeded at our tasks
-
-TODO this will be some hints what to do next 
+While we generally consider our tasks successfully completed, we've encountered a few issues that we did not have the time left to solve. Also, we weren't meant to bring the \emph{Chrysalis} project into a final state to never be touched again, but to pave the way for future iterations and improvements.\newline
+With this chapter we want to lay out what issues exactly are not solved as we hand in our work, as well as give some suggestions what steps would generally be smart to tackle next - either to prevent more problems or to expand functionality. 
 
 \section{Integrating Hyperledger into Chrysalis}
 \label{sec:issues:integration}
 
-TODO explain why chrysalis doesn't eat enzian-yellow any more
+With a \emph{Hyperledger} application introduced to the project, we were not able to deploy the front-end application into browsers any more, as the packing process of the \emph{react-webpack} application failed because of a Hyperledger dependency. Because of this, all Hyperledger-related changes are currently shelved into different branches:
+\begin{itemize}
+    \item For \emph{Chrysalis}, no changes would be needed. The \emph{main} branch therefore should suffice. An incomplete fixing attempt to do a version upgrade (see below for details) may be found in the branch \emph{webpack-upgrade}.
+    \item \emph{Enzian-Yellow}'s running version, excluding all \emph{Hyperledger}-related changes, is found in the \emph{main} branch. The Hyperledger-related changes may be found in the branch \emph{HyperLedger}.
+\end{itemize}
 
-TODO explain that deploying it is a bad idea anyway
+\textbf{The issue} \\[0.2em]
+Currently, the \emph{Enzian-Yellow} module is installed as a dependency in the \emph{Chrysalis} module, meaning that the entire code of Enzian-Yellow will be deployed onto and executed in the target browser. To do this, in a process called \emph{minifying}, the \emph{webpack} library parses all code, including dependencies, and outputs a minimal 'bundle' to save bandwidth for the browser. However, webpack's parser has a bug that appears only when parsing a specific statement ('import.x'), which incidentally exists in the Hyperledger API. Therefore, while everything is functional, Chrysalis is unable to deploy the new code.
 
-TODO Task: put ey into a container and make it a server
+\textbf{Solution 1: Version upgrade} \\[0.2em]
+As the parser bug stems from \emph{webpack}, we attempted to upgrade it's version from 4.x to 5.x, but didn't find the time to complete it. However, we propose a more permanent solution to such compatibility issues below.
 
-TODO explain: good to have it close to the blockchain anyway, less networking issues
+\textbf{Solution 2: Separating Enzian-Yellow} \\[0.2em]
+While being a viable option, installing all project dependencies and deploying their packed version into a browser may become unhandy and slow once the project reaches a certain size. As an alternative solution, future developers could focus on creating a REST-server similar to the one constructed in section \ref{sec:impr:persistence} and instantiate \emph{Enzian-Yellow} only there - offering it's functions via a network interface while keeping the local browser version lightweight. \newline
+Additionally, it makes sense to keep \emph{Enzian-Yellow} physically close to the Blockchain nodes: As the application uses multiple APIs to interface with said nodes, network traffic may become rather complex between \emph{Enzian-Yellow} and the nodes. Keeping the APIs close, however, would keep such issues at a minimum.
 
 \section{Improving on the Process Model}
 \label{sec:issues:bpm}
 
-TODO our work was very architectural, now that thats done it would be perfect time to expand functionality
+As we've done a lot of architectural work, focusing on giving future developers as many tools to expand the system as possible, we propose indeed expanding the system further as a next step: The currently implemented BPM engine is rather limited, for example not being able to execute tasks more than once and therefore making loops impossible. \newline
+With the architecture we created, it should be a relatively easy task to overhaul the engine model of \emph{Chrysalis}, adding more BPM features and maybe even fully supporting all BPMN features one day.

@@ -12,7 +12,7 @@ Initially, when we got our hands on the project, CHRYSALIS stored all of the off
 
 The other point of concern was that the only way to access deployed process model was by explicitly typing in its contract address, which renders the user interface completely useless and ruins user experience. Furthermore, to pick a task to execute, one had to explicitly specify the id assigned to it after the parsing into enzian model, which the user might not have even noticed. Lastly, there was no constraints on the task identifiers that could be chosen, so the user was perfectly capable of choosing an incorrect one and getting an error. To combat that, it was decided to implement a persistence layer, which would store all the off-chain information in a database, including information on associations between tasks and deployed processes. 
 
-\begin{figure}[htb]
+\begin{figure}[hbt]
 	\includegraphics[width=\textwidth]{gfx/persistence_before}
 	\caption{Process execution page before implementation of the persistence layer}
 	\label{fig:impr:persistence:before}
@@ -23,7 +23,7 @@ The other point of concern was that the only way to access deployed process mode
 
 To implement this functionality it was decided to build a separate REST-server. For the server's implementation express.js framework was chosen, since the entire project is in javascript and express.js is meant for RESTful API implementation. PostgreSQL was chosen as a database management system, mainly because it is widely used and optimized for production, but free at the same time (unlike, for example, Oracle). It also provides a wide array of object-relational functionality, which could be useful further down the line in CHRYSALIS development. For exchange between the server and the database Sequelize ORM is used.
 
-\begin{figure}[htb]
+\begin{figure}[hbt]
 	\centering
 	\includegraphics[width=.3\textwidth]{gfx/persistence_architecture}
 	\caption{Persistence layer architecture}
@@ -37,7 +37,7 @@ As is required by Sequelize ORM and express.js framework, the server code is div
  
 The database schema is rather simple and consists of six entities (apart from the system ones, needed for the Sequelize ORM to work). Those entities are: Process, task, connection, abi, setting and account. The entities "Process" and "Task" are self-explanatory. Connections contain information about blockchain networks that the user could connect to. Account contains information regarding user's account on the blockchain network, such as their private key for signing transactions. Abi is an entity containing compiled smart contract code for executing a process model and is deployed every time a new process is uploaded to the system. The "Settings" entity contains current set of connection configurations, chosen by the user. Processes and Tasks are connected by a one-to-many association.
 
-\begin{figure}[htb]
+\begin{figure}[hbt]
 	\includegraphics[width=\textwidth]{gfx/persistence_schema}
 	\caption{Database schema}
 	\label{fig:impr:persistence:schema}
@@ -51,7 +51,7 @@ On the frontend side we had to work within the confines of the existing applicat
 To implement this it was decided to create an ExchangeHandler class which would be called by the application components to handle their requests. The components would pass to it the request method, URI and optionally data that they have to send, and then based on the method the exchange handler would find the appropriate instance of one of the sender classes and call them to execute the request. These sender classes are GetRequestSender, PostRequestSender, PatchRequestSender and DeleteRequestSender. They are instantiated and kept in the SenderRepository class. It contains a map with request methods as keys and sender instances as values. The exchange handler gets an appropriate sender from this map and calls its send() method to make a request to the server, returning a special promise objects, which provides methods to specify a logic, that should be executed once the response is received.
 
 
-\begin{figure}[htb]
+\begin{figure}[hbt]
 	\includegraphics[width=\textwidth]{gfx/persistence_exchange}
 	\caption{Database exhange module}
 	\label{fig:impr:persistence:exchange}
@@ -62,7 +62,7 @@ To implement this it was decided to create an ExchangeHandler class which would 
 
 After the changes made, all of the off-chain data was moved from the local storage to a separate database, improving safety and reliability. User experience was also significantly improved, since it became possible to choose deployed processes by their name from a list provided by the server, as well as choose from tasks associated with the process, by their name as well. The functionality of retrieving deployed processes by their contract addresses (if they are not present in the database) was preserved as well, but it underwent slight changes to make it compatible with the new architecture, and these changes will be discussed in the smart contract optimization section.
 
-\begin{figure}[htb]
+\begin{figure}[hbt]
 	\includegraphics[width=\textwidth]{gfx/persistence_after}
 	\caption{Process execution page after the improvements}
 	\label{fig:impr:persistence:after}

@@ -1,0 +1,19 @@
+variables you have to fill:
+	<datadir>: The directory your ethereum Instance is situated at
+	<port>: the port number under which the Chain should be responding. Our default was "8085"
+
+### starting a network node ###
+# open powershell
+geth --http --http.port <port> --datadir <datadir> --networkid 123 --nodiscover --http.corsdomain *
+# leave this window open
+# open new powershell window for the miner
+geth attach \\.\pipe\geth.ipc
+# this URL should be the same as the one output somewhere as "IPC endpoint" in the first window
+# you're now in the JS shell
+# x is the number of threads to mine with, 1 works fine, higher numbers are faster but more resource-intensive.
+miner.start(x) 
+# leave window open
+
+# to stop:
+miner.stop()
+# then just exit everything

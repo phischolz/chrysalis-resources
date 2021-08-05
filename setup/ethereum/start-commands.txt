@@ -6,6 +6,8 @@ variables you have to fill:
 # open powershell
 geth --http --http.port <port> --datadir <datadir> --networkid 123 --nodiscover --http.corsdomain *
 # leave this window open
+
+### starting a miner ###
 # open new powershell window for the miner
 geth attach \\.\pipe\geth.ipc
 # this URL should be the same as the one output somewhere as "IPC endpoint" in the first window
@@ -13,7 +15,7 @@ geth attach \\.\pipe\geth.ipc
 # x is the number of threads to mine with, 1 works fine, higher numbers are faster but more resource-intensive.
 miner.start(x) 
 # leave window open
-
+# ...
 # to stop:
 miner.stop()
 # then just exit everything

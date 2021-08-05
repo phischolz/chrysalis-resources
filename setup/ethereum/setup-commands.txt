@@ -1,0 +1,2 @@
+### init network:
+geth --http --http.port "8085" --datadir <path-to>\<your-chain-directory> init <path-to>\genesis.json

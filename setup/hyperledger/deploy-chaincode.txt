@@ -15,7 +15,6 @@ NETWORK START
 ./network.sh down
 
 ./network.sh up
-
 # IF YOU WANT TO RUN ENZIAN-YELLOW with a hyperledger-connection: add '-ca' flag!
 # check if a ca-container was created, offering port 7054, otherwise auth connection will be refused
 # this process is sadly very fragile :/

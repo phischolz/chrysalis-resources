@@ -1,21 +1,27 @@
 #################
 # TEX WORKFILES #
 #################
+
+*.aux
+*.bbl
+*.blg
+*.dvi
 *.lot
-*.out
-*.out.ps
-*.run.xml
+*.lof
 *.log
 *.log.xml
+*.out
+*.out.ps
 *.run
+*.run.xml
 *.synctex.gz
 *.toc
-*.dvi
-*.lof
-*.aux
+
+
+
 *chrysalis-report-blx.bib
 
 ##########
 # OUTPUT #
 ##########
-*.pdf
+#*.pdf

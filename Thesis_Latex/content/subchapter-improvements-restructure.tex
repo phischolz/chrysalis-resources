@@ -25,7 +25,7 @@ As seen in figure \ref{fig:impr:enzian:original}, the architecture of \emph{Enzi
 From the given structure, as well as some other observations, the following issues were selected to be solved in this restructuring:
 \begin{itemize}
 \nopagebreak
-    \item The \textbf{Dependencies} in the code does not follow a good and strict hierarchy in the sense of a layer-based architecture, with each layer offering abstraction to and fully satisfying the functional demands of the layer above (Section \ref{sec:impr:enzian:dep}).
+    \item The \textbf{Dependencies} in the code do not follow a strict hierarchy in the sense of a layer-based architecture, with each layer offering abstraction to and fully satisfying the functional demands of the layer above (Section \ref{sec:impr:enzian:dep}).
     \item In many places, multiple methods with different parameters have the same effect, allowing for \textbf{code duplicates}. Additionally, \textbf{construction} does sometimes not imply object initialization, leaving room for hard-to-explain errors and 'zombie states' (Section \ref{sec:impr:enzian:sig}).
     \item It is not immediately clear, where an \textbf{Expansion}, like adding another Blockchain protocol, would be tied into (Section \ref{sec:impr:enzian:exp}). 
     \item The overall \textbf{Transparency}, especially via log outputs, should be improved (Section \ref{sec:impr:enzian:log}).
@@ -96,10 +96,21 @@ Expanding the \emph{EnzianYellow} module with a new Blockchain of type 'x' is th
 
 \subsection{Transparency}
 \label{sec:impr:enzian:log}
+To improve the application's transparency to the developer and partly the user, we've implemented a new logging strategy and added doc-strings throughout the code.
 
-TODO nested logs
+\begin{figure}[h]
+	\centering
+	\captionsetup{justification=centering,margin=2cm}
+	\includegraphics[width=0.5\textwidth]{gfx/enzian-transparency}
+	\caption{An example of nested logging during construction of Enzian-Yellow.}
+	\label{fig:impr:enzian:transparency}
+\end{figure}
 
-TODO documentation
+\textbf{Nested Logging} \\[0.2em]
+A special functionality in JavaScript is log grouping, which is achieved by calling \texttt{console.group()} to open a group and \texttt{console.groupEnd()} to close it. Everything between these delimiters will be indented in the log, with most browsers also allowing to collapse a log group. We applied these calls at the beginning and end of many methods, including a call that prints all arguments the method received, creating a nested log structure like the one visible in figure \ref{fig:impr:enzian:transparency}. This allows the developer - and the user as well - to easily follow the call structure and the way arguments have been passed down, providing aid during debugging, for example. 
+
+\textbf{Code Documentation} \\[0.2em]
+Throughout the code, we also added doc-strings to most methods. This provides the developer with useful type hints as well as short descriptions of methods, where the name alone can not convey the full syntax and semantics. 
 
 \subsection{Result}
 \label{sec:impr:enzian:result}

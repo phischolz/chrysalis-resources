@@ -3,32 +3,25 @@
 \chapter{Introduction}
 \label{sec:intro}
 
-TODO BPM more prevalent, interorg bpm, bla bla.
+In times of digitalization, \emph{Business Process Management} (BPM) systems play a central role in efficiently orchestrating and executing business processes automatically. State-of-the-art systems use a centralized program, the BPM \emph{Engine}, to offer this functionality. While this concept has proven itself for single-organization BPM, applying the same central system to a inter-organizational process leads to trust issues: With only one engine controlling all processes with absolute authority, it is difficult to ensure that the administrator of said system doesn't illegally influence the deployed processes for their own gain. \newline 
+ The project \emph{Chrysalis} seeks to eliminate this trust issue caused by a centralized BPM engine by instead deploying and running this engine on a Blockchain network, which is naturally decentralized, offers more transparency to it's peers and only allows for changes, if they're approved by a consensus mechanism. \newline
+ \emph{Chrysalis} was developed in tandem with the paper [TODO cite] as a proof-of-concept prototype and handed to us for improvement in this project.
 
-\section{Business Processes on Blockchain}
-\label{sec:intro:motivation}
-
-TODO classic BPM
-
-TODO how blockchain solves that
-
-TODO hint at christian's paper
 
 \section{Problem Statement}
 \label{sec:intro:problem}
 
-TODO prototype was handed to us -> 'Chrysalis'
-
-TODO Prototype intention: "proof of concept"
-
-TODO our task: refine that system, show that it can be made compatible with modern, modular architecture and demands
+\emph{Chrysalis}, in it's initial state, offered the basic functionality of a BPM engine using a browser-based front-end, deploying and utilizing logic on the \emph{Ethereum} blockchain in a private network. However, as it was made to be a prototype, room for expansions and feature introductions hadn't been a priority so far. \newline
+Our Task therefore is to refine \emph{Chrysalis} by overhauling it's architecture, extending it's features and following the steps necessary to make the system run efficiently. By that, we intend to make \emph{Chrysalis} more compatible with modern systems and demonstrate that it can fulfil the typical demands of users. \newline
 
 \section{Results}
 \label{sec:intro:results}
 
+To reach the aforementioned goals, we were given a set of tasks. First, we overhauled the architecture of the underlying process management library \emph{Enzian-Yellow} to increase maintainability and extensibility, as well as added a persistence layer to permanently store relevant data like the addresses of deployed process instances. Following up on this, we worked on the Blockchain applications more directly, overhauling the \emph{smart contract} code that is deployed on the \emph{Ethereum} network and developing an entirely new application on the \emph{Hyperledger} network, mirroring the functionality of the Ethereum variant. Additionally, we compared the capabilities and efficiency of \emph{Chrysalis}' Ethereum back-end to a similar and more mature system, \emph{Caterpillar}.
 
+All given tasks were completed as specified, with the exception of the \emph{Hyperledger} implementation, which runs successfully, yet has compatibility issues with \emph{Chrysalis}' front-end, which we didn't manage to fix in time. This issue is documented in detail in section \ref{sec:issues:integration}.
 
-\section{Thesis Structure}
+\section{Report Structure}
 \label{sec:intro:structure}
 
 \textbf{Chapter \ref{sec:init}} \\[0.2em]

@@ -1,0 +1,3 @@
+--- Process ID counter not incrementing when done quickly
+- when invoking the createProcess Chaincode from the CLI, doing it to fast causes it to
+- not increment and return the same process key. Bug hasn't occured in Enzian-Yellow yet due to it being much slower at invoking.

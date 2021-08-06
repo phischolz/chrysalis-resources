@@ -23,25 +23,28 @@ As an implementation model for this task clean architecture was chosen, since th
 \label{sec:impr:eth:implementation}
 
 On the domain model layer, the libraries containing structs defining the objects of a process model along with the process state were implemented. These libraries were TaskEntities, DecisionEntities and ProcessEntities.\newline
-The TaskEntities library defines the structure of a process task, which contains information on Task's name and id within the process instance, its completion state, as well as the set of requirements, that have to be fulfilled for this task to be up for execution. It also contains a reference to a Decision object, which is described in the DecisionEntities library.
-
+The TaskEntities library defines the structure of a process task, which contains information on Task's name and id within the process instance, its completion state, as well as the set of requirements, that have to be fulfilled for this task to be up for execution. It also contains a reference to a Decision object, which is described in the DecisionEntities library.\newline
 The DecisionEntities library defines structures and enumerators needed for evaluating control flow requirements in the gateways of a process model. The decision structure itself contains information on the gateway type, variables compared as well as the comparison operator for those variables. The enumerators containing gateway types and operators are also defined in this library.\newline
-The processEntities library defines the structure containing information on the process structure and state. It contains the process' tasks, its integer variables and string variables.
-
+The processEntities library defines the structure containing information on the process structure and state. It contains the process' tasks, its integer variables and string variables.\newline
 On the application layer there are two libraries: TaskLibrary and DecisionLibrary. TaskLibrary implements methods to create tasks on the process initialization, as well as methods to handle execution of tasks including evaluation of task requirements. To evaluate gateway conditions it calls the DecisionLibrary, which implements appropriate functionality.\newline
 The presentation layer consists of the BasicEnzian smart contract, which provides entry points for the EnzianYellow library to interact with, as well as keeps the state of the process instance and its event log. 
 
 \begin{figure}[h]
-	\includegraphics[width=0.9\textwidth]{gfx/eth-contracts}
+	\centering
+	\includegraphics[width=0.5\textwidth]{gfx/eth-contracts}
 	\caption{Structure of the ethereum smart contracts}
 	\label{fig:impr:eth:contracts}
 \end{figure}
+
+\pagebreak
 
 \subsection{Result}
 \label{sec:impr:eth:result}
 
 As an outcome of the smart contract overhaul, the structure of the smart contract code became more scalable and flexible, and it was divided into small modules which can be reused in the new contracts developed further down the line.
 Other than that, the cost of process instance deployment was lowered from ~4300000 gas to ~3600000 gas, and overall the code became much cleaner, which could be seen in the following listing, which showcases the same function handling task execution. After the refactoring most of the method's logic is incapsulated in the TaskLibrary, which is called, and then the results from the library function are used to update the process state.
+
+
 
 \lstinputlisting[style=java,caption=Task execution after the optimization]{progs/executeTask-after.txt} 
 

@@ -1,0 +1,10 @@
+### HYPERLEDGER ###
+https://www.hyperledger.org/
+
+# docs 2.2
+https://hyperledger-fabric.readthedocs.io/en/release-2.2/
+# fabric
+https://www.hyperledger.org/use/fabric
+
+### ETHEREUM ###
+https://medium.com/@pradeep_thomas/how-to-setup-your-own-private-ethereum-network-f80bc6aea088

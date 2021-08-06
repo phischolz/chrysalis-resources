@@ -3,7 +3,7 @@
 \section{Ethereum overhaul}
 \label{sec:impr:eth}
 
-In this section we will discuss improvements regarding the smart contract structure of the project. Smart contracts are used for the deployment and execution of process instances within the system. They contain structures and methods for creation and handling of tasks and control flow decisions. For each process instance one new instance of the smart contract is deployed.
+In this section we will discuss improvements regarding the smart contract structure of the project. Smart contracts are used for the deployment and execution of process instances within the system. They contain structures and methods for creation and handling of tasks and control flow decisions. For each process instance one new instance of the BasicEnzian smart contract is deployed.
 
 \subsection{Problem statement}
 \label{sec:impr:eth:problem}
@@ -32,7 +32,7 @@ On the application layer there are two libraries: TaskLibrary and DecisionLibrar
 The presentation layer consists of the BasicEnzian smart contract, which provides entry points for the EnzianYellow library to interact with, as well as keeps the state of the process instance and its event log. 
 
 \begin{figure}[h]
-	\includegraphics[width=\textwidth]{gfx/eth-contracts}
+	\includegraphics[width=0.9\textwidth]{gfx/eth-contracts}
 	\caption{Structure of the ethereum smart contracts}
 	\label{fig:impr:eth:contracts}
 \end{figure}
